@@ -1,0 +1,1056 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Quiz — Código de Conduta e Ética | Grupo JSN</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --azul:       #222F66;
+    --azul-light: #2E3E8A;
+    --laranja:    #F69B1D;
+    --laranja-dk: #D4820F;
+    --branco:     #FFFFFF;
+    --cinza-bg:   #F4F5F9;
+    --cinza-brd:  #DDE0EC;
+    --cinza-txt:  #555B7A;
+    --verde:      #1E7E44;
+    --verde-bg:   #E8F5EE;
+    --verde-brd:  #A8D5B8;
+    --vermelho:   #C0392B;
+    --verm-bg:    #FDECEA;
+    --verm-brd:   #F0B8B3;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Inter', sans-serif; background: var(--cinza-bg); color: var(--azul); min-height: 100vh; }
+
+  /* HEADER */
+  header {
+    background: var(--azul);
+    padding: 24px 40px;
+    display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;
+  }
+  .header-title { font-size: 1.1rem; font-weight: 700; color: #fff; }
+  .header-sub   { font-size: 0.75rem; color: rgba(255,255,255,0.5); margin-top: 3px; }
+  .badge { background: var(--laranja); color: var(--azul); font-size: 0.68rem; font-weight: 700; padding: 4px 12px; border-radius: 20px; white-space: nowrap; }
+
+  /* PROGRESS */
+  .prog-wrap { background: var(--azul); padding: 0 40px 18px; }
+  .prog-info  { display: flex; justify-content: space-between; font-size: 0.7rem; color: rgba(255,255,255,0.45); margin-bottom: 5px; }
+  .prog-track { height: 4px; background: rgba(255,255,255,0.12); border-radius: 4px; overflow: hidden; }
+  .prog-fill  { height: 100%; background: var(--laranja); border-radius: 4px; transition: width 0.4s; width: 0%; }
+
+  /* CONTAINER */
+  main { max-width: 720px; margin: 36px auto; padding: 0 20px 80px; }
+
+  /* TELAS */
+  .tela { display: none; }
+  .tela.ativa { display: block; }
+
+  /* CARD */
+  .card {
+    background: var(--branco); border: 1px solid var(--cinza-brd);
+    border-radius: 14px; overflow: hidden;
+    box-shadow: 0 2px 12px rgba(34,47,102,0.06);
+  }
+  .card-body { padding: 32px; }
+
+  /* IDENTIFICAÇÃO */
+  .id-icon { font-size: 2.5rem; text-align: center; margin-bottom: 12px; }
+  .id-titulo { font-size: 1.3rem; font-weight: 700; color: var(--azul); text-align: center; margin-bottom: 6px; }
+  .id-sub { font-size: 0.85rem; color: var(--cinza-txt); text-align: center; margin-bottom: 28px; line-height: 1.5; }
+
+  .campo-grupo { margin-bottom: 18px; }
+  .campo-label { font-size: 0.78rem; font-weight: 600; color: var(--azul); margin-bottom: 6px; display: block; }
+  .campo-input {
+    width: 100%; padding: 11px 14px; border: 1.5px solid var(--cinza-brd);
+    border-radius: 8px; font-family: 'Inter', sans-serif; font-size: 0.9rem;
+    color: var(--azul); outline: none; transition: border-color 0.15s;
+    background: var(--cinza-bg);
+  }
+  .campo-input:focus { border-color: var(--laranja); background: #fff; }
+  .campo-input.erro { border-color: var(--vermelho); }
+
+  .btn-primario {
+    width: 100%; padding: 14px; background: var(--azul); color: #fff;
+    border: none; border-radius: 10px; font-family: 'Inter', sans-serif;
+    font-size: 0.95rem; font-weight: 600; cursor: pointer; margin-top: 8px;
+    transition: background 0.15s; display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .btn-primario:hover { background: var(--azul-light); }
+  .btn-laranja { background: var(--laranja); color: var(--azul); }
+  .btn-laranja:hover { background: var(--laranja-dk); }
+
+  /* QUIZ */
+  .quiz-meta {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 16px 24px; border-bottom: 1px solid var(--cinza-brd);
+    flex-wrap: wrap; gap: 8px;
+  }
+  .quiz-num { font-size: 0.78rem; font-weight: 600; color: var(--cinza-txt); }
+  .quiz-tent { font-size: 0.7rem; background: var(--cinza-bg); color: var(--cinza-txt); padding: 3px 10px; border-radius: 20px; border: 1px solid var(--cinza-brd); }
+
+  .quiz-body { padding: 28px 24px 20px; }
+  .quiz-secao { font-size: 0.68rem; font-weight: 600; color: var(--laranja-dk); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 8px; }
+  .quiz-pergunta { font-size: 1rem; font-weight: 600; color: var(--azul); line-height: 1.5; margin-bottom: 22px; }
+
+  .opcoes { display: flex; flex-direction: column; gap: 10px; }
+  .opcao {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 12px 16px; border-radius: 10px; border: 1.5px solid var(--cinza-brd);
+    cursor: pointer; transition: all 0.15s; background: var(--branco); user-select: none;
+  }
+  .opcao:hover { border-color: var(--laranja); background: #FFFBF2; }
+  .opcao.selecionada { border-color: var(--azul); background: #EEF1FA; }
+  .opcao-letra {
+    min-width: 26px; height: 26px; border-radius: 50%; background: var(--cinza-bg);
+    border: 1.5px solid var(--cinza-brd); display: flex; align-items: center;
+    justify-content: center; font-size: 0.72rem; font-weight: 700; color: var(--cinza-txt);
+    flex-shrink: 0; transition: all 0.15s; margin-top: 1px;
+  }
+  .opcao.selecionada .opcao-letra { background: var(--azul); border-color: var(--azul); color: #fff; }
+  .opcao-texto { font-size: 0.9rem; color: #333; line-height: 1.45; }
+
+  .quiz-footer { padding: 16px 24px 24px; display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+  .btn-nav {
+    padding: 10px 24px; border-radius: 8px; border: none; font-family: 'Inter', sans-serif;
+    font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: all 0.15s;
+  }
+  .btn-avancar { background: var(--azul); color: #fff; min-width: 120px; }
+  .btn-avancar:hover { background: var(--azul-light); }
+  .btn-avancar:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  /* RESULTADO */
+  .res-header {
+    padding: 36px 32px 28px; text-align: center;
+  }
+  .res-icone { font-size: 3.5rem; margin-bottom: 12px; }
+  .res-titulo { font-size: 1.5rem; font-weight: 700; margin-bottom: 8px; }
+  .res-titulo.aprovado { color: var(--verde); }
+  .res-titulo.reprovado { color: var(--vermelho); }
+  .res-sub { font-size: 0.9rem; color: var(--cinza-txt); line-height: 1.6; }
+
+  .res-nota-wrap {
+    margin: 0 32px 28px;
+    padding: 24px; border-radius: 12px; text-align: center;
+  }
+  .res-nota-wrap.aprovado { background: var(--verde-bg); border: 1px solid var(--verde-brd); }
+  .res-nota-wrap.reprovado { background: var(--verm-bg); border: 1px solid var(--verm-brd); }
+  .res-nota-num { font-size: 3rem; font-weight: 700; line-height: 1; }
+  .res-nota-num.aprovado { color: var(--verde); }
+  .res-nota-num.reprovado { color: var(--vermelho); }
+  .res-nota-label { font-size: 0.8rem; margin-top: 6px; color: var(--cinza-txt); }
+  .res-barra-wrap { margin-top: 12px; height: 8px; background: rgba(0,0,0,0.08); border-radius: 4px; overflow: hidden; }
+  .res-barra-fill { height: 100%; border-radius: 4px; transition: width 1s ease; }
+  .aprovado .res-barra-fill { background: var(--verde); }
+  .reprovado .res-barra-fill { background: var(--vermelho); }
+
+  .res-info { padding: 0 32px 28px; }
+  .res-info-item { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--cinza-brd); font-size: 0.85rem; }
+  .res-info-item:last-child { border-bottom: none; }
+  .res-info-label { color: var(--cinza-txt); }
+  .res-info-valor { font-weight: 600; color: var(--azul); }
+
+  .res-footer { padding: 0 32px 32px; }
+
+  /* LOADING */
+  .loading-wrap { text-align: center; padding: 48px 32px; }
+  .spinner { width: 40px; height: 40px; border: 4px solid var(--cinza-brd); border-top-color: var(--laranja); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 16px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loading-txt { font-size: 0.9rem; color: var(--cinza-txt); }
+
+  /* MENSAGEM ERRO */
+  .msg-erro { background: var(--verm-bg); border: 1px solid var(--verm-brd); border-radius: 8px; padding: 12px 16px; font-size: 0.82rem; color: var(--vermelho); margin-top: 12px; display: none; }
+
+  footer { text-align: center; font-size: 0.7rem; color: var(--cinza-txt); padding: 20px; border-top: 1px solid var(--cinza-brd); margin-top: 40px; }
+  footer span { color: var(--laranja); font-weight: 600; }
+
+  @media (max-width: 600px) {
+    header { padding: 18px 20px; }
+    .prog-wrap { padding: 0 20px 14px; }
+    main { margin: 20px auto; }
+    .card-body, .quiz-body, .quiz-footer, .res-header, .res-nota-wrap, .res-info, .res-footer { padding-left: 16px; padding-right: 16px; }
+    .res-nota-wrap { margin-left: 16px; margin-right: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <div class="header-title">Código de Conduta e Ética — Grupo JSN</div>
+    <div class="header-sub">Quiz de certificação · 20 questões · Mínimo 80% para aprovação</div>
+  </div>
+  <div class="badge">CYTEI © 2026</div>
+</header>
+
+<div class="prog-wrap">
+  <div class="prog-info">
+    <span id="prog-label">Identificação</span>
+    <span id="prog-pct">0%</span>
+  </div>
+  <div class="prog-track"><div class="prog-fill" id="prog-fill"></div></div>
+</div>
+
+<main>
+
+  <!-- TELA 1: IDENTIFICAÇÃO -->
+  <div class="tela ativa" id="tela-id">
+    <div class="card">
+      <div class="card-body">
+        <div class="id-icon">📋</div>
+        <div class="id-titulo">Identificação</div>
+        <div class="id-sub">Preencha seus dados antes de iniciar o quiz.<br>Suas respostas serão registradas ao final.</div>
+
+        <div class="campo-grupo">
+          <label class="campo-label">Nome completo *</label>
+          <input class="campo-input" id="inp-nome" type="text" placeholder="Seu nome completo">
+        </div>
+        <div class="campo-grupo">
+          <label class="campo-label">E-mail *</label>
+          <input class="campo-input" id="inp-email" type="email" placeholder="seu@email.com" oninput="this.classList.remove('erro')">
+        </div>
+        <div class="campo-grupo">
+          <label class="campo-label">Telefone *</label>
+          <input class="campo-input" id="inp-tel" type="tel" placeholder="(61) 99999-9999" maxlength="15" oninput="mascaraTel(this)">
+        </div>
+        <div class="campo-grupo">
+          <label class="campo-label">Empresa *</label>
+          <input class="campo-input" id="inp-empresa" type="text" placeholder="Nome da sua empresa">
+        </div>
+
+        <div class="msg-erro" id="erro-id">Por favor, preencha todos os campos antes de continuar.</div>
+
+        <button class="btn-primario btn-laranja" onclick="iniciarQuiz()" style="margin-top:20px">
+          Iniciar Quiz →
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TELA 2: QUIZ -->
+  <div class="tela" id="tela-quiz">
+    <div class="card">
+      <div class="quiz-meta">
+        <span class="quiz-num" id="quiz-num">Questão 1 de 20</span>
+        <span class="quiz-tent" id="quiz-tent">Tentativa 1</span>
+      </div>
+      <div class="quiz-body">
+        <div class="quiz-secao" id="quiz-secao"></div>
+        <div class="quiz-pergunta" id="quiz-pergunta"></div>
+        <div class="opcoes" id="quiz-opcoes"></div>
+      </div>
+      <div class="quiz-footer">
+        <span style="font-size:0.78rem;color:var(--cinza-txt)" id="quiz-obrig">Selecione uma opção</span>
+        <button class="btn-nav btn-avancar" id="btn-avancar" onclick="avancar()" disabled>Próxima →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TELA 3: LOADING -->
+  <div class="tela" id="tela-loading">
+    <div class="card">
+      <div class="loading-wrap">
+        <div class="spinner"></div>
+        <div class="loading-txt" id="loading-txt">Registrando resultado...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TELA 4: RESULTADO -->
+  <div class="tela" id="tela-resultado">
+    <div class="card">
+      <div class="res-header">
+        <div class="res-icone" id="res-icone"></div>
+        <div class="res-titulo" id="res-titulo"></div>
+        <div class="res-sub" id="res-sub"></div>
+      </div>
+
+      <div class="res-nota-wrap" id="res-nota-wrap">
+        <div class="res-nota-num" id="res-nota-num"></div>
+        <div class="res-nota-label">de 20 questões corretas</div>
+        <div class="res-barra-wrap">
+          <div class="res-barra-fill" id="res-barra" style="width:0%"></div>
+        </div>
+      </div>
+
+      <div class="res-info">
+        <div class="res-info-item">
+          <span class="res-info-label">Participante</span>
+          <span class="res-info-valor" id="res-nome"></span>
+        </div>
+        <div class="res-info-item">
+          <span class="res-info-label">Empresa</span>
+          <span class="res-info-valor" id="res-empresa"></span>
+        </div>
+        <div class="res-info-item">
+          <span class="res-info-label">Aproveitamento</span>
+          <span class="res-info-valor" id="res-pct"></span>
+        </div>
+        <div class="res-info-item">
+          <span class="res-info-label">Tentativa</span>
+          <span class="res-info-valor" id="res-tent"></span>
+        </div>
+        <div class="res-info-item">
+          <span class="res-info-label">Mínimo exigido</span>
+          <span class="res-info-valor">80% (16 de 20 questões)</span>
+        </div>
+        <div class="res-info-item">
+          <span class="res-info-label">Data / Hora</span>
+          <span class="res-info-valor" id="res-data"></span>
+        </div>
+      </div>
+
+      <div class="res-footer" id="res-footer"></div>
+    </div>
+  </div>
+
+</main>
+
+<footer>Quiz de Certificação — Código de Conduta e Ética | <span>Grupo JSN × CYTEI</span> · 2026</footer>
+
+<script>
+// ════════════════════════════════════════════════════════════════════
+// MÁSCARA TELEFONE
+// ════════════════════════════════════════════════════════════════════
+function mascaraTel(input) {
+  let v = input.value.replace(/\D/g, '').slice(0, 11);
+  if (v.length <= 2)        v = v.replace(/^(\d{0,2})/, '($1');
+  else if (v.length <= 6)   v = v.replace(/^(\d{2})(\d{0,4})/, '($1) $2');
+  else if (v.length <= 10)  v = v.replace(/^(\d{2})(\d{4})(\d{0,4})/, '($1) $2-$3');
+  else                      v = v.replace(/^(\d{2})(\d{5})(\d{0,4})/, '($1) $2-$3');
+  input.value = v;
+}
+
+// ════════════════════════════════════════════════════════════════════
+// CONFIGURAÇÃO — substitua pela URL do seu Google Apps Script
+// ════════════════════════════════════════════════════════════════════
+const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbypDYW6ktlrD92K-H2BJEKMuoUzmKjo7l_bRO_KeEReeGAKG2gf3NuovBhCg1nCi8Wa/exec';
+
+// ════════════════════════════════════════════════════════════════════
+// BANCO DE 40 QUESTÕES
+// ════════════════════════════════════════════════════════════════════
+const BANCO = [
+  // ── BLOCO 1: Abrangência e Princípios ──
+  {
+    secao: 'Seção 1 — Abrangência',
+    pergunta: 'O Código de Conduta e Ética do Grupo JSN se aplica a quais pessoas?',
+    opcoes: [
+      'Apenas aos colaboradores com carteira assinada (CLT)',
+      'Somente à liderança e aos acionistas',
+      'Conselheiros, acionistas, colaboradores, líderes, prestadores de serviços, fornecedores, parceiros e qualquer pessoa que represente a empresa',
+      'Apenas às áreas de engenharia e tecnologia'
+    ],
+    correta: 2
+  },
+  {
+    secao: 'Seção 2.1 — Integridade',
+    pergunta: 'De acordo com o princípio da Integridade, as decisões devem ser tomadas com base em:',
+    opcoes: [
+      'Relacionamento pessoal e tempo de empresa',
+      'Fatos, dados e critérios técnicos, nunca em interesses pessoais',
+      'Orientação dos líderes imediatos, independentemente de critérios técnicos',
+      'Consenso da equipe, mesmo que envolva interesses pessoais'
+    ],
+    correta: 1
+  },
+  {
+    secao: 'Seção 2.2 — Transparência',
+    pergunta: 'O que o princípio da Transparência determina sobre os processos do Grupo JSN?',
+    opcoes: [
+      'Apenas os processos financeiros precisam ser documentados',
+      'Informações relevantes devem ser comunicadas com clareza e processos devem ser passíveis de auditoria',
+      'A transparência se aplica somente às relações com clientes externos',
+      'Processos internos podem ser mantidos em sigilo desde que aprovados pela diretoria'
+    ],
+    correta: 1
+  },
+  {
+    secao: 'Seção 2.3 — Responsabilidade',
+    pergunta: 'Quando um erro é cometido, o que o Código determina que o colaborador deve fazer?',
+    opcoes: [
+      'Corrigir silenciosamente sem comunicar a ninguém',
+      'Aguardar que o erro seja percebido pelos superiores',
+      'Comunicar imediatamente às instâncias competentes para correção',
+      'Registrar o erro somente ao final do mês no relatório periódico'
+    ],
+    correta: 2
+  },
+  {
+    secao: 'Seção 2.4 — Respeito',
+    pergunta: 'O princípio do Respeito no Grupo JSN determina que o ambiente de trabalho deve ser:',
+    opcoes: [
+      'Seguro e respeitoso apenas para os colaboradores diretos',
+      'Seguro, digno e respeitoso, sem distinções',
+      'Respeitoso somente nas relações com clientes e parceiros',
+      'Seguro para líderes e gestores, com regras flexíveis para prestadores'
+    ],
+    correta: 1
+  },
+  // ── BLOCO 2: Engenharia e Operações ──
+  {
+    secao: 'Seção 3 — Engenharia',
+    pergunta: 'Qual conduta é expressamente proibida nas operações de engenharia do Grupo JSN?',
+    opcoes: [
+      'Utilizar fornecedores internacionais sem aprovação prévia',
+      'Ignorar procedimentos, acelerar etapas críticas ou ocultar riscos',
+      'Realizar auditorias sem aviso prévio aos prestadores',
+      'Subcontratar etapas de projeto sem aprovação gerencial'
+    ],
+    correta: 1
+  },
+  {
+    secao: 'Seção 3.2 — Qualidade Técnica',
+    pergunta: 'Em relação à qualidade técnica, o Código proíbe:',
+    opcoes: [
+      'Uso de fornecedores nacionais sem certificação internacional',
+      'Subcontratação de serviços sem anuência da cooperativa',
+      'Utilizar materiais falsificados, fora de especificação ou sem certificação',
+      'Alterar projetos sem consulta ao cliente final'
+    ],
+    correta: 2
+  },
+  {
+    secao: 'Seção 3.3 — Prestadores',
+    pergunta: 'Quanto aos prestadores de serviços e parceiros do Grupo JSN:',
+    opcoes: [
+      'Devem seguir o Código somente se solicitado por escrito',
+      'Devem seguir este Código e os manuais técnicos, podendo ser auditados a qualquer momento',
+      'Estão isentos das regras do Código por serem externos à empresa',
+      'Precisam seguir apenas as normas técnicas, não as éticas'
+    ],
+    correta: 1
+  },
+  // ── BLOCO 3: Seguros e Suprimentos ──
+  {
+    secao: 'Seção 4 — Seguros',
+    pergunta: 'Na atividade de seguros, o Código exige que os produtos sejam:',
+    opcoes: [
+      'Explicados com clareza, sem omissões ou promessas irreais',
+      'Apresentados apenas às pessoas com perfil de risco compatível',
+      'Vendidos somente por corretores certificados externamente',
+      'Detalhados apenas quando o cliente solicitar por escrito'
+    ],
+    correta: 0
+  },
+  {
+    secao: 'Seção 5 — Importação',
+    pergunta: 'Em relação à ética comercial nas importações, é proibido:',
+    opcoes: [
+      'Importar componentes sem nota fiscal de origem',
+      'Oferecer ou aceitar vantagens indevidas para acelerar processos ou liberar cargas',
+      'Contratar despachantes sem aprovação da diretoria',
+      'Importar de países que não possuem acordo comercial com o Brasil'
+    ],
+    correta: 1
+  },
+  {
+    secao: 'Seção 5.3 — Fornecedores',
+    pergunta: 'A seleção de fornecedores no Grupo JSN deve ser baseada em:',
+    opcoes: [
+      'Preço mais baixo, independentemente de outros critérios',
+      'Indicação de líderes e gestores internos',
+      'Critérios técnicos, éticos e de qualidade, nunca em favorecimento pessoal',
+      'Relacionamento histórico com a empresa, priorizando parceiros antigos'
+    ],
+    correta: 2
+  },
+  // ── BLOCO 4: Mobilidade e Software ──
+  {
+    secao: 'Seção 6.1 — Mobilidade Elétrica',
+    pergunta: 'Em mobilidade elétrica, carregadores e baterias devem:',
+    opcoes: [
+      'Seguir normas nacionais da ABNT apenas',
+      'Seguir normas internacionais e prestadores devem ser treinados e certificados',
+      'Ser instalados por qualquer profissional autorizado pelo cliente',
+      'Seguir normas definidas pelo próprio Grupo JSN'
+    ],
+    correta: 1
+  },
+  {
+    secao: 'Seção 6.2 — Uso da Marca',
+    pergunta: 'O uso da marca e identidade visual do Grupo JSN por prestadores e parceiros:',
+    opcoes: [
+      'É livre, desde que seja para fins de divulgação do serviço',
+      'É restrito aos limites operacionais estabelecidos em contrato, pautado pela verdade e boa-fé',
+      'Qualquer parceiro pode utilizar após 6 meses de contrato',
+      'É proibido para todos os prestadores de serviços sem exceção'
+    ],
+    correta: 1
+  },
+  {
+    secao: 'Seções 7.1 e 7.2 — Dados de Energia',
+    pergunta: 'Os dados de consumo, faturamento e compensação de créditos de energia são classificados como:',
+    opcoes: [
+      'Informações públicas que podem ser compartilhadas entre parceiros',
+      'Dados internos de acesso restrito à diretoria',
+      'Ativos críticos e confidenciais, sendo proibida qualquer alteração deliberada',
+      'Dados operacionais que podem ser ajustados conforme necessidade técnica'
+    ],
+    correta: 2
+  },
+  {
+    secao: 'Seção 7.3 — Controle de Acesso',
+    pergunta: 'O acesso às bases de dados da plataforma do Grupo JSN segue qual princípio?',
+    opcoes: [
+      'Acesso livre para todos os colaboradores da empresa',
+      'Princípio do privilégio mínimo — acesso apenas a quem precisa para operar o sistema',
+      'Acesso liberado mediante solicitação formal por e-mail',
+      'Acesso restrito somente à diretoria e ao setor de TI'
+    ],
+    correta: 1
+  },
+  {
+    secao: 'Seção 7.4 — Rastreabilidade',
+    pergunta: 'O que deve acontecer ao suspeitar de anomalia ou tentativa de manipulação de dados de faturamento?',
+    opcoes: [
+      'Registrar internamente e aguardar confirmação antes de comunicar',
+      'Comunicar somente ao gestor imediato por e-mail',
+      'Reportar imediatamente ao Comitê de Auditoria e Riscos',
+      'Corrigir o dado e documentar a alteração no sistema'
+    ],
+    correta: 2
+  },
+  // ── BLOCO 5: Corrupção, Conflito e Denúncia ──
+  {
+    secao: 'Seção 8.1 — Tolerância Zero',
+    pergunta: 'Qual é a política do Grupo JSN em relação a suborno, propina e manipulação de dados técnicos?',
+    opcoes: [
+      'São tolerados em situações excepcionais aprovadas pela diretoria',
+      'São permitidos apenas em operações de importação',
+      'Tolerância zero — são expressamente proibidos',
+      'São avaliados caso a caso pelo Comitê de Ética'
+    ],
+    correta: 2
+  },
+  {
+    secao: 'Seção 8.2 — Presentes',
+    pergunta: 'Quando são permitidos presentes e hospitalidades no Grupo JSN?',
+    opcoes: [
+      'Nunca são permitidos, independentemente do valor',
+      'Somente entre colaboradores internos da empresa',
+      'Apenas quando modestos, transparentes e comunicados',
+      'São permitidos livremente sem necessidade de comunicação'
+    ],
+    correta: 2
+  },
+  {
+    secao: 'Seção 9 — Direitos Humanos',
+    pergunta: 'O compromisso do Grupo JSN com direitos humanos inclui:',
+    opcoes: [
+      'Apenas os colaboradores diretos com vínculo empregatício',
+      'Proibição de trabalho infantil, forçado ou degradante em toda a cadeia — colaboradores, fornecedores e prestadores',
+      'Somente as operações realizadas dentro do Brasil',
+      'Os colaboradores diretos e os fornecedores principais'
+    ],
+    correta: 1
+  },
+  {
+    secao: 'Seção 11 — Conflito de Interesse',
+    pergunta: 'Quando existe uma situação de conflito de interesse, o colaborador deve:',
+    opcoes: [
+      'Resolver sozinho, sem comunicar a ninguém',
+      'Ignorar, pois conflitos de interesse são comuns no ambiente corporativo',
+      'Declarar a situação para as instâncias competentes',
+      'Comunicar apenas se o conflito envolver valores financeiros relevantes'
+    ],
+    correta: 2
+  },
+  {
+    secao: 'Seção 11 — Exemplos de Conflito',
+    pergunta: 'Qual das situações abaixo é considerada um exemplo de conflito de interesse?',
+    opcoes: [
+      'Participar de treinamento técnico oferecido por um fornecedor',
+      'Possuir participação societária em empresa concorrente do Grupo JSN',
+      'Indicar um fornecedor após pesquisa técnica comparativa',
+      'Receber e-mails de empresas parceiras'
+    ],
+    correta: 1
+  },
+  // ── BLOCO 6: Denúncias, Penalidades e Sustentabilidade ──
+  {
+    secao: 'Seção 13 — Canal de Denúncias',
+    pergunta: 'O Canal de Denúncias do Grupo JSN permite que a denúncia seja feita de forma anônima?',
+    opcoes: [
+      'Não — a identificação do denunciante é obrigatória',
+      'Sim — inclusive de forma anônima',
+      'Somente para colaboradores com mais de 1 ano de empresa',
+      'Apenas para denúncias contra prestadores de serviços externos'
+    ],
+    correta: 1
+  },
+  {
+    secao: 'Seção 13 — Denúncia de Má-Fé',
+    pergunta: 'O que acontece com quem utiliza o Canal de Denúncias de forma deliberadamente falsa?',
+    opcoes: [
+      'Não há consequências, pois o canal é anônimo',
+      'A denúncia é arquivada sem investigação',
+      'Constitui violação ao Código, sujeitando o autor a medidas disciplinares',
+      'A pessoa é imediatamente demitida, sem investigação prévia'
+    ],
+    correta: 2
+  },
+  {
+    secao: 'Seção 14 — Penalidades',
+    pergunta: 'Quais são as possíveis consequências para quem violar o Código de Conduta e Ética?',
+    opcoes: [
+      'Apenas advertência verbal, sem registro formal',
+      'Somente desligamento ou cancelamento de contrato',
+      'Advertência, suspensão, desligamento, cancelamento de contrato e ações legais',
+      'Nenhuma consequência formal — o Código é apenas orientativo'
+    ],
+    correta: 2
+  },
+  {
+    secao: 'Seção 10 — Sustentabilidade',
+    pergunta: 'Qual é o compromisso do Grupo JSN em relação à sustentabilidade?',
+    opcoes: [
+      'A sustentabilidade é um diferencial competitivo opcional',
+      'É apenas o mercado de atuação, sem impacto nas operações internas',
+      'É o princípio que guia a existência da empresa, com responsabilidade de maximizar benefícios ecológicos e mitigar impactos',
+      'Aplica-se somente aos projetos de energia solar, não às demais operações'
+    ],
+    correta: 2
+  },
+  {
+    secao: 'Seção 12 — Proteção de Dados',
+    pergunta: 'O Grupo JSN adota qual postura em relação à proteção de dados pessoais?',
+    opcoes: [
+      'Proteção de dados é responsabilidade do setor de TI, não dos colaboradores',
+      'Garante o mais alto padrão de governança e confidencialidade, em conformidade com a LGPD',
+      'Dados pessoais de clientes podem ser compartilhados entre empresas do grupo livremente',
+      'A proteção de dados se aplica apenas às informações financeiras dos clientes'
+    ],
+    correta: 1
+  },
+  // ── BLOCO 7: Questões avançadas e situacionais ──
+  {
+    secao: 'Seção 7.2 — Rigor nos Dados',
+    pergunta: 'O que é terminantemente proibido em relação ao processamento de dados na plataforma JSN?',
+    opcoes: [
+      'Exportar relatórios sem autorização do gestor imediato',
+      'Inserção, alteração ou exclusão deliberada de dados técnicos que distorçam o balanço energético',
+      'Acessar o sistema fora do horário comercial',
+      'Realizar integrações com sistemas de terceiros sem aprovação de TI'
+    ],
+    correta: 1
+  },
+  {
+    secao: 'Seção 4.2 — Conflito em Seguros',
+    pergunta: 'Na atividade de seguros, como deve ser tratado um potencial conflito de interesse com um corretor parceiro?',
+    opcoes: [
+      'Pode-se manter o relacionamento desde que não haja benefício financeiro direto',
+      'Nenhum colaborador pode favorecer clientes, corretores ou parceiros por interesse pessoal',
+      'É permitido desde que aprovado pelo gestor da área de seguros',
+      'O conflito deve ser registrado internamente mas não impede a operação'
+    ],
+    correta: 1
+  },
+  {
+    secao: 'Seção 10.2 — Responsabilidade Social',
+    pergunta: 'Como o Grupo JSN deve agir em relação às populações impactadas por seus projetos de infraestrutura?',
+    opcoes: [
+      'Apenas comunicar previamente as obras e seus impactos',
+      'Respeitar integralmente os direitos das populações e promover diálogo ético, transparente e proativo com todos os stakeholders',
+      'Seguir apenas as exigências legais mínimas de licenciamento ambiental',
+      'Delegar a responsabilidade social às prefeituras locais'
+    ],
+    correta: 1
+  },
+  {
+    secao: 'Seção 7.5 — Cibersegurança',
+    pergunta: 'Em relação à segurança da informação, o Grupo JSN:',
+    opcoes: [
+      'Adota práticas de cibersegurança para proteger dados e sistemas',
+      'Depende exclusivamente de fornecedores externos para a segurança',
+      'Considera a segurança da informação responsabilidade individual de cada colaborador',
+      'Aplica segurança somente aos sistemas financeiros'
+    ],
+    correta: 0
+  },
+  {
+    secao: 'Seção 16 — Compromisso Final',
+    pergunta: 'O que todos os colaboradores, prestadores e parceiros devem fazer em relação ao Código?',
+    opcoes: [
+      'Conhecer o Código apenas na área relacionada às suas funções',
+      'Cumprir o Código somente quando solicitado formalmente',
+      'Conhecer, cumprir integralmente, agir com ética e responsabilidade e proteger a reputação do Grupo JSN',
+      'Assinar o Código uma vez e não precisar revisá-lo novamente'
+    ],
+    correta: 2
+  },
+  {
+    secao: 'Seção 5 — Conformidade Legal',
+    pergunta: 'As importações do Grupo JSN devem seguir obrigatoriamente:',
+    opcoes: [
+      'Apenas normas aduaneiras, podendo flexibilizar certificação técnica',
+      'Normas aduaneiras, fiscais e de certificação técnica',
+      'Somente as normas do país de origem do produto',
+      'As normas que oferecerem menor custo operacional'
+    ],
+    correta: 1
+  },
+  {
+    secao: 'Seção 3.1 — Segurança Operacional',
+    pergunta: 'Em projetos de engenharia, o que os colaboradores devem obrigatoriamente seguir?',
+    opcoes: [
+      'Apenas as normas ambientais, priorizando o prazo de entrega',
+      'As instruções do cliente, mesmo que contrariem normas técnicas',
+      'Normas técnicas, ambientais e de segurança, sem ignorar procedimentos ou ocultar riscos',
+      'As normas internas do Grupo JSN, independentemente das normas técnicas externas'
+    ],
+    correta: 2
+  },
+  {
+    secao: 'Seção 8.1 — Fraude',
+    pergunta: 'A manipulação de medições, relatórios ou dados técnicos no Grupo JSN é:',
+    opcoes: [
+      'Permitida quando autorizada pela liderança para ajustes operacionais',
+      'Expressamente proibida, com tolerância zero',
+      'Aceita apenas em situações de força maior devidamente documentadas',
+      'Avaliada caso a caso pelo departamento jurídico'
+    ],
+    correta: 1
+  },
+  {
+    secao: 'Seção 11 — Declaração de Conflito',
+    pergunta: 'Um colaborador percebe que um familiar seu é sócio de um fornecedor que está sendo avaliado. O que deve fazer?',
+    opcoes: [
+      'Participar normalmente do processo, pois não há vantagem financeira direta para ele',
+      'Declarar a situação às instâncias competentes, pois configura potencial conflito de interesse',
+      'Solicitar apenas que outro colaborador assine o contrato',
+      'Informar somente se o fornecedor for selecionado'
+    ],
+    correta: 1
+  },
+  {
+    secao: 'Seção 7.3 — Compartilhamento de Dados',
+    pergunta: 'É vedado compartilhar dados tarifários, cadastrais ou financeiros de consumidores e geradores com terceiros:',
+    opcoes: [
+      'Sempre, em qualquer situação',
+      'Sem amparo contratual ou autorização legal expressa',
+      'Apenas quando os dados forem de clientes em inadimplência',
+      'Quando os dados forem solicitados por órgãos reguladores'
+    ],
+    correta: 1
+  },
+  {
+    secao: 'Seção 9 — Trabalho Digno',
+    pergunta: 'O Grupo JSN exige de seus fornecedores e prestadores de serviços:',
+    opcoes: [
+      'Apenas o cumprimento das obrigações contratuais comerciais',
+      'Certificação técnica específica do setor elétrico',
+      'Proibição de trabalho infantil, forçado ou degradante, além de ambiente livre de assédio e discriminação',
+      'Seguros e garantias financeiras como principal requisito'
+    ],
+    correta: 2
+  },
+  {
+    secao: 'Seção 12 — LGPD',
+    pergunta: 'O tratamento de dados pessoais no Grupo JSN deve estar em conformidade com:',
+    opcoes: [
+      'As políticas internas de segurança da informação apenas',
+      'A LGPD (Lei nº 13.709/2018) e o mais alto padrão de governança e confidencialidade',
+      'As recomendações do fornecedor de software utilizado pela empresa',
+      'As normas do setor elétrico estabelecidas pela ANEEL'
+    ],
+    correta: 1
+  },
+  {
+    secao: 'Seção 6.1 — Certificação',
+    pergunta: 'Prestadores de serviços na área de mobilidade elétrica devem ser:',
+    opcoes: [
+      'Registrados no CREA, sem necessidade de certificação específica',
+      'Aprovados pela área comercial do Grupo JSN',
+      'Treinados e certificados para atuar com carregadores, baterias e sistemas elétricos',
+      'Indicados por clientes do Grupo JSN como referência'
+    ],
+    correta: 2
+  },
+  {
+    secao: 'Seção 4.3 — Dados de Clientes (Seguros)',
+    pergunta: 'Informações de clientes na atividade de seguros devem ser tratadas como:',
+    opcoes: [
+      'Informações públicas acessíveis a todos os departamentos',
+      'Confidenciais, tratadas conforme legislação vigente',
+      'Dados disponíveis para corretores parceiros sem restrição',
+      'Informações que podem ser usadas em campanhas de marketing'
+    ],
+    correta: 1
+  },
+  {
+    secao: 'Seção 8.1 — Lavagem',
+    pergunta: 'Qual das práticas abaixo é expressamente proibida pelo Código?',
+    opcoes: [
+      'Contratar prestadores de outros estados sem aprovação regional',
+      'Lavagem de dinheiro ou práticas ilícitas',
+      'Realizar pagamentos antecipados a fornecedores sem garantias',
+      'Emitir notas fiscais com valores aproximados'
+    ],
+    correta: 1
+  },
+  {
+    secao: 'Seção 2 — Princípios Gerais',
+    pergunta: 'Qual conjunto de princípios fundamenta o Código de Conduta e Ética do Grupo JSN?',
+    opcoes: [
+      'Produtividade, lucratividade, inovação e competitividade',
+      'Integridade, transparência, responsabilidade e respeito',
+      'Agilidade, flexibilidade, adaptabilidade e eficiência',
+      'Hierarquia, disciplina, obediência e resultados'
+    ],
+    correta: 1
+  }
+];
+
+// ════════════════════════════════════════════════════════════════════
+// ESTADO
+// ════════════════════════════════════════════════════════════════════
+let usuario = {};
+let tentativa = 1;
+let questoesAtuais = [];
+let indiceAtual = 0;
+let respostas = [];
+let acertos = 0;
+
+// ════════════════════════════════════════════════════════════════════
+// UTILITÁRIOS
+// ════════════════════════════════════════════════════════════════════
+function shuffleArray(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function mostrarTela(id) {
+  document.querySelectorAll('.tela').forEach(t => t.classList.remove('ativa'));
+  document.getElementById(id).classList.add('ativa');
+}
+
+function atualizarProg(atual, total) {
+  const pct = Math.round((atual / total) * 100);
+  document.getElementById('prog-fill').style.width = pct + '%';
+  document.getElementById('prog-pct').textContent = pct + '%';
+  document.getElementById('prog-label').textContent = atual === 0
+    ? (tentativa === 1 ? 'Questão 1 de 20' : `Tentativa ${tentativa} — Questão 1 de 20`)
+    : `${tentativa === 2 ? 'Tentativa 2 — ' : ''}Questão ${atual} de ${total}`;
+}
+
+// ════════════════════════════════════════════════════════════════════
+// IDENTIFICAÇÃO
+// ════════════════════════════════════════════════════════════════════
+function iniciarQuiz() {
+  const nome    = document.getElementById('inp-nome').value.trim();
+  const email   = document.getElementById('inp-email').value.trim();
+  const tel     = document.getElementById('inp-tel').value.trim();
+  const empresa = document.getElementById('inp-empresa').value.trim();
+  const erro    = document.getElementById('erro-id');
+
+  const emailValido = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
+  if (!nome || !email || !tel || !empresa) {
+    erro.textContent = 'Por favor, preencha todos os campos antes de continuar.';
+    erro.style.display = 'block';
+    return;
+  }
+  if (!emailValido) {
+    erro.textContent = 'Por favor, informe um e-mail válido (ex: nome@empresa.com).';
+    erro.style.display = 'block';
+    document.getElementById('inp-email').classList.add('erro');
+    return;
+  }
+  erro.style.display = 'none';
+  document.getElementById('inp-email').classList.remove('erro');
+
+  usuario = { nome, email, tel, empresa };
+
+  tentativa = 1;
+  iniciarTentativa(shuffleArray(BANCO).slice(0, 20));
+}
+
+// ════════════════════════════════════════════════════════════════════
+// TENTATIVA
+// ════════════════════════════════════════════════════════════════════
+function iniciarTentativa(questoes) {
+  questoesAtuais = questoes;
+  indiceAtual = 0;
+  respostas = new Array(20).fill(null);
+  acertos = 0;
+  mostrarTela('tela-quiz');
+  renderQuestao();
+}
+
+function renderQuestao() {
+  const q = questoesAtuais[indiceAtual];
+  const letras = ['A', 'B', 'C', 'D'];
+
+  document.getElementById('quiz-num').textContent  = `Questão ${indiceAtual + 1} de 20`;
+  document.getElementById('quiz-tent').textContent = `Tentativa ${tentativa}`;
+  document.getElementById('quiz-secao').textContent    = q.secao;
+  document.getElementById('quiz-pergunta').textContent = q.pergunta;
+
+  const container = document.getElementById('quiz-opcoes');
+  container.innerHTML = '';
+  q.opcoes.forEach((op, i) => {
+    const div = document.createElement('div');
+    div.className = 'opcao' + (respostas[indiceAtual] === i ? ' selecionada' : '');
+    div.innerHTML = `<span class="opcao-letra">${letras[i]}</span><span class="opcao-texto">${op}</span>`;
+    div.onclick = () => selecionarOpcao(i);
+    container.appendChild(div);
+  });
+
+  const btnAv = document.getElementById('btn-avancar');
+  btnAv.disabled = respostas[indiceAtual] === null;
+  btnAv.textContent = indiceAtual === 19 ? 'Finalizar ✓' : 'Próxima →';
+  document.getElementById('quiz-obrig').textContent =
+    respostas[indiceAtual] !== null ? '✓ Opção selecionada' : 'Selecione uma opção';
+
+  atualizarProg(indiceAtual + 1, 20);
+}
+
+function selecionarOpcao(idx) {
+  respostas[indiceAtual] = idx;
+  document.querySelectorAll('.opcao').forEach((el, i) => {
+    el.classList.toggle('selecionada', i === idx);
+  });
+  document.getElementById('btn-avancar').disabled = false;
+  document.getElementById('quiz-obrig').textContent = '✓ Opção selecionada';
+}
+
+function avancar() {
+  if (respostas[indiceAtual] === null) return;
+
+  if (indiceAtual < 19) {
+    indiceAtual++;
+    renderQuestao();
+  } else {
+    finalizarTentativa();
+  }
+}
+
+// ════════════════════════════════════════════════════════════════════
+// FINALIZAR TENTATIVA — grava histórico + exibe resultado
+// ════════════════════════════════════════════════════════════════════
+function finalizarTentativa() {
+  acertos = 0;
+  questoesAtuais.forEach((q, i) => {
+    if (respostas[i] === q.correta) acertos++;
+  });
+  const pct = Math.round((acertos / 20) * 100);
+  const aprovado = pct >= 80;
+
+  gravarTentativa(aprovado, pct); // grava silenciosamente em background
+  mostrarResultado(acertos, pct, aprovado);
+}
+
+// Grava cada tentativa na planilha sem bloquear a UI
+function gravarTentativa(aprovado, pct) {
+  if (SHEETS_URL === 'COLE_AQUI_A_URL_DO_APPS_SCRIPT') return;
+  const payload = {
+    nome:       usuario.nome,
+    email:      usuario.email,
+    telefone:   usuario.tel,
+    empresa:    usuario.empresa,
+    tentativa:  tentativa,
+    acertos:    acertos,
+    total:      20,
+    percentual: pct,
+    resultado:  aprovado ? 'APROVADO' : 'REPROVADO',
+    data:       new Date().toLocaleString('pt-BR')
+  };
+  fetch(SHEETS_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+    mode: 'no-cors'
+  }).catch(() => {});
+}
+
+function mostrarResultado(ac, pct, aprovado) {
+  mostrarTela('tela-resultado');
+  atualizarProg(20, 20);
+
+  const status = aprovado ? 'aprovado' : 'reprovado';
+
+  document.getElementById('res-icone').textContent  = aprovado ? '🏆' : '📚';
+  document.getElementById('res-titulo').textContent = aprovado ? 'Parabéns! Aprovado!' : 'Não atingiu o mínimo';
+  document.getElementById('res-titulo').className   = `res-titulo ${status}`;
+  document.getElementById('res-sub').textContent    = aprovado
+    ? 'Você demonstrou conhecimento do Código de Conduta e Ética do Grupo JSN.'
+    : 'Você não atingiu os 80% necessários. Revise o Código e tente novamente.';
+
+  const notaWrap = document.getElementById('res-nota-wrap');
+  const notaNum  = document.getElementById('res-nota-num');
+  notaWrap.className  = `res-nota-wrap ${status}`;
+  notaNum.className   = `res-nota-num ${status}`;
+  notaNum.textContent = `${ac}/20`;
+
+  setTimeout(() => { document.getElementById('res-barra').style.width = pct + '%'; }, 300);
+
+  document.getElementById('res-nome').textContent    = usuario.nome;
+  document.getElementById('res-empresa').textContent = usuario.empresa;
+  document.getElementById('res-pct').textContent     = `${pct}%`;
+  document.getElementById('res-tent').textContent    = `${tentativa}ª tentativa`;
+  document.getElementById('res-data').textContent    = new Date().toLocaleString('pt-BR');
+
+  const footer = document.getElementById('res-footer');
+  if (aprovado) {
+    footer.innerHTML = `
+      <button class="btn-primario btn-laranja" onclick="finalizarEGravar()">
+        ✓ Finalizar e Registrar
+      </button>`;
+  } else if (tentativa < 2) {
+    footer.innerHTML = `
+      <p style="font-size:0.82rem;color:var(--cinza-txt);text-align:center;margin-bottom:14px">
+        Revise o Código de Conduta e tente novamente. Você ainda tem <strong>1 tentativa</strong> disponível.
+      </p>
+      <button class="btn-primario" onclick="refazerQuiz()">
+        ↺ Refazer Quiz
+      </button>`;
+  } else {
+    footer.innerHTML = `
+      <div style="background:var(--verm-bg);border:1px solid var(--verm-brd);border-radius:10px;padding:18px 20px;text-align:center">
+        <div style="font-size:1.3rem;margin-bottom:8px">⚠️</div>
+        <div style="font-weight:700;color:var(--vermelho);margin-bottom:6px">Tentativas esgotadas</div>
+        <div style="font-size:0.83rem;color:var(--cinza-txt);line-height:1.6">
+          Você não foi aprovado nas 2 tentativas disponíveis.<br>
+          Entre em contato com o suporte para mais informações.
+        </div>
+      </div>`;
+  }
+}
+
+// ════════════════════════════════════════════════════════════════════
+// REFAZER — nova tentativa com banco embaralhado
+// ════════════════════════════════════════════════════════════════════
+function refazerQuiz() {
+  tentativa++;
+  iniciarTentativa(shuffleArray(BANCO).slice(0, 20));
+}
+
+// ════════════════════════════════════════════════════════════════════
+// FINALIZAR — aprovado confirmou; dado já foi gravado, só exibe confirmação
+// ════════════════════════════════════════════════════════════════════
+function finalizarEGravar() {
+  mostrarConfirmacao();
+}
+
+function mostrarConfirmacao() {
+  const pct = Math.round((acertos / 20) * 100);
+
+  document.getElementById('res-icone').textContent  = '✅';
+  document.getElementById('res-titulo').textContent = 'Resultado Registrado!';
+  document.getElementById('res-titulo').className   = 'res-titulo aprovado';
+  document.getElementById('res-sub').textContent    = 'Seu histórico foi salvo com sucesso. Parabéns pela aprovação!';
+
+  document.getElementById('res-footer').innerHTML = `
+    <button class="btn-primario btn-laranja" onclick="window.print()">
+      🖨 Imprimir Comprovante
+    </button>`;
+}
+</script>
+</body>
+</html>
